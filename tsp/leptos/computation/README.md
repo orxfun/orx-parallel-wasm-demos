@@ -25,7 +25,7 @@ There are three common ways to wire `orx-parallel` into a crate:
 ```toml
 # computation/Cargo.toml
 [dependencies]
-orx-parallel = { path = "../../../../..", default-features = false }
+orx-parallel = { git = "https://github.com/orxfun/orx-parallel", branch = "v4", default-features = false }
 
 [features]
 default = []
