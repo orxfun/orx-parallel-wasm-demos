@@ -10,7 +10,7 @@ crate-type = ["cdylib", "rlib"]
 [dependencies]
 computation = { path = "../computation", features = ["wasm"] }
 js-sys = "0.3"
-orx-parallel = { git = "https://github.com/orxfun/orx-parallel", branch = "v4", default-features = false, features = [
+orx-parallel = { git = "https://github.com/orxfun/orx-parallel", branch = "feat/redesign-abstractions-api-wasm-support", default-features = false, features = [
     "wasm",
 ] }
 serde = { version = "1", features = ["derive"] }
