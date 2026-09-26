@@ -34,7 +34,23 @@ fn create_tour(rng: &mut impl Rng, locations: &[Location]) -> Solution {
     Solution { tour, distance }
 }
 
+/// Note that this is a super inefficient way to implement:
+///
+/// ```
+/// fn random_tour(rng: &mut impl Rng, num_cities: usize) -> Vec<usize> {
+///     let mut tour: Vec<usize> = (0..num_cities).collect();
+///     tour.shuffle(rng);
+///     tour
+/// }
+///
+/// On purpose, we allocate too many unnecessary vectors just to put memory
+/// pressure to web workers and observe how it reacts.
+/// ```
 fn random_tour(rng: &mut impl Rng, num_cities: usize) -> Vec<usize> {
+    // let mut tour: Vec<usize> = (0..num_cities).collect();
+    // tour.shuffle(rng);
+    // tour
+
     let mut tours = vec![];
     for _ in 0..num_cities {
         let mut tours_i = vec![];
