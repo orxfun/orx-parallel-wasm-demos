@@ -7,13 +7,9 @@ publish = false
 [dependencies]
 ordered-float = { version = "5.3.0" }
 # orx-parallel = { version = "4.0" }
-orx-parallel = { path = "/home/uarikan/orx/orx-parallel" }
+orx-parallel = { git = "https://github.com/orxfun/orx-parallel", branch = "feat--wasm-under-memory-pressure" }
 rand = { version = "0.9", default-features = false, features = [
     "std",
     "small_rng",
 ] }
 serde = { version = "1", features = ["derive"] }
-
-[features]
-default = []
-wasm = ["orx-parallel/wasm"]

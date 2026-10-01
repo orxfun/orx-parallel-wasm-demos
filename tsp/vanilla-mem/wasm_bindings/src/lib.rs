@@ -1,10 +1,11 @@
-use computation::{create_locations, Location};
-use orx_parallel_wasm_allocator::WasmParallelAllocator;
+use computation::{Location, create_locations};
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
 #[global_allocator]
-static GLOBAL_ALLOCATOR: WasmParallelAllocator = WasmParallelAllocator::new();
+#[cfg(target_arch = "wasm32")]
+static GLOBAL_ALLOCATOR: orx_parallel::WasmParallelAllocator<32> =
+    orx_parallel::WasmParallelAllocator::new();
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 /// Result returned to the frontend after a search completes.

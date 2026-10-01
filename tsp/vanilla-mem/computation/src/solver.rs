@@ -36,7 +36,7 @@ fn create_tour(rng: &mut impl Rng, locations: &[Location]) -> Solution {
 
 /// Note that this is a super inefficient way to implement:
 ///
-/// ```
+/// ```ignore
 /// fn random_tour(rng: &mut impl Rng, num_cities: usize) -> Vec<usize> {
 ///     let mut tour: Vec<usize> = (0..num_cities).collect();
 ///     tour.shuffle(rng);
