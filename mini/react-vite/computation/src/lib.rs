@@ -15,7 +15,7 @@ pub fn calculate_fibonacci(workload: usize, num_threads: usize) -> u64 {
     (0..workload)
         .par()
         .num_threads(num_threads)
-        .map(|index| fibonacci_term(index))
+        .map(fibonacci_term)
         .sum()
 }
 
