@@ -59,7 +59,7 @@ pub fn mandelbrot_checksum(limit: u32, num_threads: u32) -> u32 {
 }
 ```
 
-If you have a memory-heavy computation, and hence, enabled `wasm-allocator` feature, add the following line to `par_wasm/wasm_bindings/src/lib.rs` as well. This will replace the default WASM allocator with an allocator having 32 shards that is specialized for parallel computations.
+If you have a allocation-heavy computation, and hence, enabled `wasm-allocator` feature, add the following line to `par_wasm/wasm_bindings/src/lib.rs` as well. This will replace the default WASM allocator with an allocator having 32 shards that is specialized for parallel computations.
 
 ```rust
 #[cfg(target_arch = "wasm32")]
