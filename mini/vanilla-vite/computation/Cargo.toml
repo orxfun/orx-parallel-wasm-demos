@@ -6,7 +6,3 @@ publish = false
 
 [dependencies]
 orx-parallel = { version = "4.0" }
-
-[features]
-default = []
-wasm = ["orx-parallel/wasm"]

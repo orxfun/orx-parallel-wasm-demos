@@ -7,7 +7,7 @@ cargo new --lib computation
 cd computation
 ```
 
-## `orx-parallel` dependency with wasm feature
+## `orx-parallel` dependency
 
 Add `orx-parallel` dependency to implement parallel computations in `par_wasm/computation/Cargo.toml`:
 
@@ -20,23 +20,7 @@ publish = false
 
 [dependencies]
 orx-parallel = { version = "4" }
-
-[features]
-default = []
-wasm = ["orx-parallel/wasm"]
-wasm-allocator = ["orx-parallel/wasm-allocator"]
 ```
-
-Note that `wasm` feature is kept optional. This allows:
-
-* to use this crate as a regular Rust crate when the feature is omitted, and
-* to test the computations in isolation without WebAssembly dependencies.
-
-For the same reason, `wasm-allocator` feature is kept optional.
-Enable this feature when the parallel computation includes significant memory allocation.
-In this case, WASM memory allocation becomes the bottleneck causing multi-threaded computation
-to be slower than single-threaded computation (the diagnosis).
-This problem can be conveniently avoided by using `wasm-allocator` feature (the fix).
 
 ## Example computations
 

@@ -12,7 +12,3 @@ rand = { version = "0.9", default-features = false, features = [
     "small_rng",
 ] }
 serde = { version = "1", features = ["derive"] }
-
-[features]
-default = []
-wasm = ["orx-parallel/wasm"]

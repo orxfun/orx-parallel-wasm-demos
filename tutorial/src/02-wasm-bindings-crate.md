@@ -12,9 +12,10 @@ cd wasm_bindings
 We will add dependencies to:
 
 * `wasm-bindgen` for creating WebAssembly bindings, and
-* to our own `computation` crate using the `wasm` feature.
+* our own `computation` crate, and
+* `orx-parallel` with its `wasm` feature enabled.
 
-> Recall that `wasm` feature of `computation` crate enables the `wasm` feature of `orx-parallel`.
+The `wasm` feature belongs on the direct `orx-parallel` dependency in the bindings crate; the computation crate stays independent of WebAssembly configuration.
 
 Update `par_wasm/wasm_bindings/Cargo.toml` as follows:
 
@@ -29,12 +30,12 @@ publish = false
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-computation = { path = "../computation", features = ["wasm"] }
+computation = { path = "../computation" }
+orx-parallel = { version = "4", features = ["wasm"] }
 wasm-bindgen = "0.2"
 ```
 
-Optionally add `wasm-allocator` feature as well; i.e., `features = ["wasm", "wasm-allocator"]`
-when the parallel computation includes significant memory allocation.
+When the parallel computation includes significant memory allocation, enable `wasm-allocator` on this `orx-parallel` dependency as well: `features = ["wasm", "wasm-allocator"]`. It can prevent WebAssembly memory allocation from becoming a bottleneck that makes multithreaded computation slower than single-threaded computation.
 
 ## Exposed functions
 
