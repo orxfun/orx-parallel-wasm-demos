@@ -11,7 +11,7 @@
     },
     "dependencies": {
         "highlight.js": "^11.11.1",
-        "orx-parallel-wasm": "git+https://github.com/orxfun/orx-parallel-wasm.git",
+        "orx-parallel-wasm": "1.0.0",
         "react": "^19.1.1",
         "react-dom": "^19.1.1"
     },

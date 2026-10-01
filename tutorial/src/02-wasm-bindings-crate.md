@@ -12,9 +12,10 @@ cd wasm_bindings
 We will add dependencies to:
 
 * `wasm-bindgen` for creating WebAssembly bindings, and
-* to our own `computation` crate using the `wasm` feature.
+* our own `computation` crate, and
+* `orx-parallel` with its `wasm` feature enabled.
 
-> Recall that `wasm` feature of `computation` crate enables the `wasm` feature of `orx-parallel`.
+The `wasm` feature belongs on the direct `orx-parallel` dependency in the bindings crate; the computation crate stays independent of WebAssembly configuration.
 
 Update `par_wasm/wasm_bindings/Cargo.toml` as follows:
 
@@ -29,8 +30,15 @@ publish = false
 crate-type = ["cdylib", "rlib"]
 
 [dependencies]
-computation = { path = "../computation", features = ["wasm"] }
+computation = { path = "../computation" }
+orx-parallel = { version = "4", features = ["wasm"] }
 wasm-bindgen = "0.2"
+```
+
+When the parallel computation involves significant and frequent memory allocation, enable `wasm-allocator` on this `orx-parallel` dependency as well, it can prevent WebAssembly memory allocation from becoming a bottleneck that makes multithreaded computation slower than single-threaded computation.
+
+```toml
+orx-parallel = { version = "4", features = ["wasm", "wasm-allocator"] }
 ```
 
 ## Exposed functions
@@ -51,6 +59,15 @@ pub fn mandelbrot_checksum(limit: u32, num_threads: u32) -> u32 {
 }
 ```
 
+If you have a allocation-heavy computation, and hence, enabled `wasm-allocator` feature, add the following line to `par_wasm/wasm_bindings/src/lib.rs` as well. This will replace the default WASM allocator with an allocator having 32 shards that is specialized for parallel computations.
+
+```rust
+#[cfg(target_arch = "wasm32")]
+#[global_allocator]
+static GLOBAL_ALLOCATOR: orx_parallel::WasmParallelAllocator<32> =
+    orx_parallel::WasmParallelAllocator::new();
+```
+
 Notice that we keep this layer as thin as possible:
 
 * we make necessary type conversions,
@@ -69,7 +86,9 @@ cargo build \
   -Z build-std=panic_abort,std
 ```
 
-> These flags enable multi-threaded WebAssembly execution: `+atomics` and `--shared-memory` enable atomic operations and shared linear memory for thread coordination, `--max-memory` sets the memory limit, `--import-memory` allows the host to provide memory, and the `__*` exports expose thread-local storage (TLS) setup functions needed for proper thread initialization. <br /><br /> As we will see in the next section, this build step will be automated using `orx-parallel-wasm`.
+> These flags enable multi-threaded WebAssembly execution: `+atomics` and `--shared-memory` enable atomic operations and shared linear memory for thread coordination, `--max-memory` sets the memory limit, `--import-memory` allows the host to provide memory, and the `__*` exports expose thread-local storage (TLS) setup functions needed for proper thread initialization.
+>
+> As we will see in the next section, this build step will be automated using `orx-parallel-wasm`.
 
 One level up into `par_wasm` directory:
 

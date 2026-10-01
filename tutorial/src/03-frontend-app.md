@@ -26,7 +26,7 @@ Create `par_wasm/app/package.json` as follows:
         "build": "npm run build:wasm && npm run typecheck && npm exec -- vite build"
     },
     "dependencies": {
-        "orx-parallel-wasm": "git+https://github.com/orxfun/orx-parallel-wasm.git"
+        "orx-parallel-wasm": "1.0.0"
     },
     "devDependencies": {
         "typescript": "^5.6.3",
@@ -420,7 +420,7 @@ The generated `pkg/wasm_bindings.js` import is intentionally present before the 
 The `ParallelWorker` is the bridge between the page and the Rust WASM module:
 
 * `bindingsUrl` points to the generated bindings package,
-* `methods` lists the exported Rust functions that the worker may call, 
+* `methods` lists the exported Rust functions that the worker may call,
 * and `THREADS_IN_POOL: 0` asks the runtime to size the shared pool automatically.
 
 The worker initializes that pool when `ready()` resolves and exposes the resulting capacity through `initializedThreads`.

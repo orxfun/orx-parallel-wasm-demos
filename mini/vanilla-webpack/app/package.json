@@ -10,7 +10,7 @@
         "build": "npm run build:wasm && npm run typecheck && npm exec -- webpack --mode production"
     },
     "dependencies": {
-        "orx-parallel-wasm": "git+https://github.com/orxfun/orx-parallel-wasm.git"
+        "orx-parallel-wasm": "1.0.0"
     },
     "devDependencies": {
         "@types/webpack-env": "^1.18.0",

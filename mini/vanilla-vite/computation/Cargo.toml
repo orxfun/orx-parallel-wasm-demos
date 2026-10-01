@@ -5,8 +5,4 @@ edition = "2024"
 publish = false
 
 [dependencies]
-orx-parallel = { version = "4.0", default-features = false }
-
-[features]
-default = []
-wasm = ["orx-parallel/wasm"]
+orx-parallel = { version = "4.0" }
