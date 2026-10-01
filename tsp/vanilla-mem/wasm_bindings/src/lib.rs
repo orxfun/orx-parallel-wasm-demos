@@ -2,8 +2,8 @@ use computation::{Location, create_locations};
 use serde::{Deserialize, Serialize};
 use wasm_bindgen::prelude::*;
 
-#[global_allocator]
 #[cfg(target_arch = "wasm32")]
+#[global_allocator]
 static GLOBAL_ALLOCATOR: orx_parallel::WasmParallelAllocator<32> =
     orx_parallel::WasmParallelAllocator::new();
 
