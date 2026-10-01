@@ -33,6 +33,9 @@ computation = { path = "../computation", features = ["wasm"] }
 wasm-bindgen = "0.2"
 ```
 
+Optionally add `wasm-allocator` feature as well; i.e., `features = ["wasm", "wasm-allocator"]`
+when the parallel computation includes significant memory allocation.
+
 ## Exposed functions
 
 Update `par_wasm/wasm_bindings/src/lib.rs` as follows:
