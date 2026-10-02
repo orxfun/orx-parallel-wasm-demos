@@ -8,7 +8,7 @@ It is responsible for rendering the page, managing UI state, and invoking the se
 
 - render the interactive UI with Leptos
 - keep search settings and view state in Rust
-- call into the generated wasm exports such as `start_app`, `init_wasm_parallel_runtime`, and `run_search`
+- export `start_app()` for the browser host and send search requests through its JavaScript worker bridge
 - hand off worker lifecycle concerns to the JavaScript host application
 
 ## How it fits into the example
@@ -18,7 +18,7 @@ This crate sits between the browser app and the computation bindings:
 - `app/src/main.ts` loads the generated wasm package and calls `start_app()`
 - `components/` renders the UI and prepares search requests
 - `app/src/search-runner.ts` exposes a JavaScript function on `globalThis` so the Leptos UI can trigger a worker-backed search
-- `app/src/search-worker.ts` initializes wasm in a worker and calls `run_search`
+- `app/src/search-runner.ts` uses `ParallelWorker` from `orx-parallel-wasm` to run the generated bindings in a worker
 
 That split is deliberate. It keeps UI state and presentation in Rust while leaving browser-specific worker setup and bundler concerns in the Vite app.
 
@@ -32,16 +32,16 @@ This crate also calls into the wasm bindings to execute searches, but it does th
 
 ## Parallel execution
 
-The UI itself does not create the thread pool directly. Instead, it sends a request to the TypeScript worker bridge, and the worker calls `init_wasm_parallel_runtime(thread_count)` before the first parallel `run_search`.
+The UI does not create the thread pool directly. The TypeScript bridge delegates worker and runtime setup to `ParallelWorker`; the UI sends it search settings and locations.
 
 This separation matters because browser workers own their own wasm instances and runtime initialization.
 
 ## Build relationship
 
-The browser app builds this crate with:
+From `app/`, the `build:wasm` script builds this crate into `app/pkg`:
 
 ```bash
-wasm-pack build ../components --target web --out-dir ../app/pkg
+npm run build:wasm
 ```
 
-That command generates the wasm artifact plus `app/pkg/components.js`, which the browser host loads from `app/src/main.ts` and `app/src/search-worker.ts`.
+The script uses `orx-parallel-wasm` to generate the wasm package consumed by `app/src/main.ts` and the worker bridge.
