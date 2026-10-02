@@ -2,10 +2,10 @@
 
 The app built in this tutorial uses Vite, but the WASM bindings can be used with other JavaScript bundlers. The `orx-parallel-wasm` package provides a bundler-specific plugin for each integration:
 
-* [Vite](https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/mini/vanilla-vite)
-* [Webpack](https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/mini/vanilla-webpack)
-* [Rspack](https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/mini/vanilla-rspack)
-* [Rollup](https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/mini/vanilla-rollup)
+* [Vite](https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/mini/vanilla-vite)
+* [Webpack](https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/mini/vanilla-webpack)
+* [Rspack](https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/mini/vanilla-rspack)
+* [Rollup](https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/mini/vanilla-rollup)
 
 Each example is the same small application with a different bundler configuration. The plugin is imported from the corresponding subpath, such as `orx-parallel-wasm/vite` or `orx-parallel-wasm/webpack`.
 
@@ -33,13 +33,13 @@ It is possible to build the application without one of these plugins. The essent
 5. Configure the development server to send the required cross-origin isolation headers.
 6. Configure the production server or hosting platform to send the same headers when serving the built application.
 
-A complete plugin-free version of this demo is available in the [vanilla-manual example](https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/mini/vanilla-manual). It uses the bundler-neutral build command, `esbuild` only to bundle the application TypeScript, and a small Node.js server to serve the generated assets with the required headers.
+A complete plugin-free version of this demo is available in the [vanilla-manual example](https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/mini/vanilla-manual). It uses the bundler-neutral build command, `esbuild` only to bundle the application TypeScript, and a small Node.js server to serve the generated assets with the required headers.
 
 The plugin-free example adds two small files to take over the integration work:
 
 * `build.mjs` runs the bundler-neutral `orx-parallel-wasm` build command, copies the generated bindings, WASM module, and worker assets into `dist`, and bundles the application TypeScript with `esbuild`.
 * `server.mjs` serves `dist` and adds the `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp` headers required by `SharedArrayBuffer`.
 
-The `orx-parallel-wasm` package is still used. It provides the WASM build and preparation logic as well as the `ParallelWorker` runtime client; the application only supplies the bundler and server wiring that a plugin would otherwise provide. 
+The `orx-parallel-wasm` package is still used. It provides the WASM build and preparation logic as well as the `ParallelWorker` runtime client; the application only supplies the bundler and server wiring that a plugin would otherwise provide.
 
 This approach gives more control over output names, caching, deployment, and bundler behavior, but it also makes the integration the application's responsibility. The examples above are useful references when implementing that workflow manually or when adapting the plugin to a different build system.
