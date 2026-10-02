@@ -999,12 +999,7 @@ Cross-Origin-Embedder-Policy: require-corp
                             <li>Configure the production server or hosting platform to send the same headers when
                                 serving the built application.</li>
                         </ol>
-                        <p>A complete plugin-free version of this demo is available in the <a
-                                href="https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/mini/vanilla-manual">vanilla-manual
-                                example</a>. It uses the bundler-neutral build command, <code>esbuild</code> only to
-                            bundle the application TypeScript, and a small Node.js server to serve the generated assets
-                            with the required headers.</p>
-                        <p>The plugin-free example adds two small files to take over the integration work:</p>
+                        <p>The plugin-free version adds two small files to take over the integration work:</p>
                         <ul>
                             <li><code>build.mjs</code> runs the bundler-neutral <code>orx-parallel-wasm</code> build
                                 command, copies the generated bindings, WASM module, and worker assets into
