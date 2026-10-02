@@ -9,10 +9,7 @@ crate-type = ["cdylib", "rlib"]
 
 [dependencies]
 computation = { path = "../computation" }
-orx-parallel = { git = "https://github.com/orxfun/orx-parallel", branch = "feat--wasm-under-memory-pressure", features = [
-    "wasm",
-    "wasm-allocator",
-] }
+orx-parallel = { version = "4.1", features = ["wasm", "wasm-allocator"] }
 serde = { version = "1", features = ["derive"] }
 serde-wasm-bindgen = "0.6"
 wasm-bindgen = "0.2"

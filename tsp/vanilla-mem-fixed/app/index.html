@@ -18,77 +18,55 @@
       </a>
       <div class="hero-copy">
         <h1>Parallel computation in WASM</h1>
-        <p class="hero-kicker">A vanilla TSP demo with shared-memory wasm threads using orx-parallel.</p>
+        <p class="hero-kicker">
+          A vanilla TSP demo demonstrating where a use case where memory allocation becomes the bottleneck and this
+          makes <strong>parallel computation slower than single-threaded</strong> when we use the default WASM
+          allocator.
+        </p>
       </div>
     </header>
     <section class="intro-cards" aria-label="Example overview">
       <article class="intro-card">
-        <h2>Computation: Local Search for TSP</h2>
-        <p>Randomly create tours and locally optimize with two-opt <code>Iterations</code> times, and return the best
-          tour.</p>
+        <h2>Allocation-heavy computation</h2>
+        <p>
+          This is an intentionally very memory-inefficient implementation.
+          The algorithm allocates a large number of vectors over and over throughout the search.
+          Using the default WASM allocator this makes parallel computation slower than single-threaded.
+        </p>
       </article>
       <article class="intro-card">
-        <h2>Frontend</h2>
-        <p>Vanilla Vite + TypeScript UI.</p>
+        <h2>Observe the fix</h2>
+        <p>
+          <strong>Run</strong> the algorithm with <strong>1</strong> thread.
+          In a reference computer, this takes <span style="color:lightgreen">6 seconds</span>.
+        </p>
+        <p>
+          Then <strong>Run</strong> the algorithm with <strong>8</strong> threads.
+          On the same computer this takes <span style="color:lightgreen">1.5 seconds</span>.
+        </p>
       </article>
       <article class="intro-card">
-        <div class="code-card-header">
-          <h2>Sequential Code</h2>
-          <details class="code-help">
-            <summary class="code-help-trigger" aria-label="Show sequential code explanation">?</summary>
-            <div class="code-help-popover" role="note">
-              <h2 style="padding-left: 10px;">Sequential Code Breakdown</h2>
-              <pre class="code-block"><code class="language-rust">// random-number-generator to construct initial random tours
-let mut rng = SmallRng::seed_from_u64(seed);
-
-// we will construct & improve `iterations` tours
-(0..iterations)
-
-    // `create_tour`constructs a random tour and locally-optimizes within 2-opt
-    .map(|_| create_tour(&mut rng, locations))
-
-    // among all created tours, we pick the one with minimum distance
-    .min_by_key(|x| OrderedFloat::from(x.distance))</code></pre>
-            </div>
-          </details>
-        </div>
-        <pre class="code-block"><code class="language-rust">let mut rng = SmallRng::seed_from_u64(seed);
-(0..iterations)
-    .map(|_| create_tour(&mut rng, locations))
-    .min_by_key(|x| OrderedFloat::from(x.distance))</code></pre>
+        <h2>The fix</h2>
+        <p>The fix is convenient.</p>
+        <p>We use a parallel workload friendly allocator instead.</p>
+        <p>We keep the changes limited, only on the wasm bindings layer, as demonstrated on the right ➤</p>
+        <br>
+        <p>
+          You may see the live demo of the version before the fix <a href="" target="_blank">here</a>.
+        </p>
       </article>
       <article class="intro-card">
-        <div class="code-card-header">
-          <h2>Parallel Code</h2>
-          <details class="code-help">
-            <summary class="code-help-trigger" aria-label="Show parallel code explanation">?</summary>
-            <div class="code-help-popover" role="note">
-              <h2 style="padding-left: 10px;">Parallel Code Breakdown</h2>
-              <pre class="code-block"><code class="language-rust">// we will construct & improve `iterations` tours
-(0..iterations)
-
-    // convert the iterator into parallel iterator
-    .into_par()
-
-    // `use_new` enables mutable variables in parallel computations
-    // each thread will have its own random number generator
-    // `t` here is the thread index, with value in (0..num_threads)
-    .use_new(|t| SmallRng::seed_from_u64(seed + t as u64))
-
-    // `create_tour`constructs a random tour and locally-optimizes within 2-opt
-    .map(|rng, _| create_tour(rng, locations))
-
-    // among all created tours, we pick the one with minimum distance
-    .min_by_key(|x| OrderedFloat::from(x.distance))</code></pre>
-            </div>
-          </details>
-        </div>
-        <pre class="code-block"><code class="language-rust">(0..iterations)
-    .into_par()
-    .use_new(|t| SmallRng::seed_from_u64(seed + t as u64))
-    .map(|rng, _| create_tour(rng, locations))
-    .min_by_key(|x| OrderedFloat::from(x.distance))</code></pre>
+        <p>Enable <strong>wasm-allocator</strong> feature in <code>wasm_bindings/Cargol.toml</code></p>
+        <pre class="code-block"><code class="language-rust">orx-parallel = { version = "4.1",
+    features = ["wasm", "wasm-allocator"] }</code></pre>
+        <br />
+        <p>Use parallel-friendly allocator in <code>wasm_bindings/src/lib.rs</code></p>
+        <pre class="code-block"><code class="language-rust">#[cfg(target_arch = "wasm32")]
+#[global_allocator]
+static GLOBAL_ALLOCATOR: orx_parallel::WasmParallelAllocator&lt;32&gt; =
+    orx_parallel::WasmParallelAllocator::new();</code></pre>
       </article>
+
     </section>
 
     <section class="card">

@@ -5,4 +5,4 @@ edition = "2024"
 publish = false
 
 [dependencies]
-orx-parallel = { version = "4.0" }
+orx-parallel = { version = "4.1" }
