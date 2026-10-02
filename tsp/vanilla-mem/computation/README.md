@@ -18,14 +18,14 @@ That is enough for native builds, but wasm needs the additional `wasm` feature s
 
 There are three common ways to wire `orx-parallel` into a crate:
 
-* Include `orx-parallel` without `wasm` if the crate will never run in wasm.
-* Include `orx-parallel` with `wasm` if every build should support wasm threads.
-* Make `wasm` optional if the crate should work both in native builds and in wasm builds. This example uses that approach:
+- Include `orx-parallel` without `wasm` if the crate will never run in wasm.
+- Include `orx-parallel` with `wasm` if every build should support wasm threads.
+- Make `wasm` optional if the crate should work both in native builds and in wasm builds. This example uses that approach:
 
 ```toml
 # computation/Cargo.toml
 [dependencies]
-orx-parallel = { version = "4.0", default-features = false }
+orx-parallel = { version = "4.1", default-features = false }
 
 [features]
 default = []
@@ -45,4 +45,3 @@ Note that `wasm_bindings` crate includes the `computation` crate with `wasm` fea
 [dependencies]
 computation = { path = "../computation", features = ["wasm"] }
 ```
-
