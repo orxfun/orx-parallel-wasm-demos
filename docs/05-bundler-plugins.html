@@ -35,7 +35,7 @@
             const path_to_root = "";
             const default_light_theme = "light";
             const default_dark_theme = "navy";
-            window.path_to_searchindex_js = "searchindex-15dbebf7.js";
+            window.path_to_searchindex_js = "searchindex-01ced3c5.js";
         </script>
         <!-- Start loading toc.js asap -->
         <script src="toc-839136a2.js"></script>
@@ -177,10 +177,10 @@
                         <h1 id="other-bundlers"><a class="header" href="#other-bundlers">Other bundlers</a></h1>
 <p>The app built in this tutorial uses Vite, but the WASM bindings can be used with other JavaScript bundlers. The <code>orx-parallel-wasm</code> package provides a bundler-specific plugin for each integration:</p>
 <ul>
-<li><a href="https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/mini/vanilla-vite">Vite</a></li>
-<li><a href="https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/mini/vanilla-webpack">Webpack</a></li>
-<li><a href="https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/mini/vanilla-rspack">Rspack</a></li>
-<li><a href="https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/mini/vanilla-rollup">Rollup</a></li>
+<li><a href="https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/mini/vanilla-vite">Vite</a></li>
+<li><a href="https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/mini/vanilla-webpack">Webpack</a></li>
+<li><a href="https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/mini/vanilla-rspack">Rspack</a></li>
+<li><a href="https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/mini/vanilla-rollup">Rollup</a></li>
 </ul>
 <p>Each example is the same small application with a different bundler configuration. The plugin is imported from the corresponding subpath, such as <code>orx-parallel-wasm/vite</code> or <code>orx-parallel-wasm/webpack</code>.</p>
 <h2 id="why-the-plugins-exist"><a class="header" href="#why-the-plugins-exist">Why the plugins exist</a></h2>
@@ -203,8 +203,7 @@
 <li>Configure the development server to send the required cross-origin isolation headers.</li>
 <li>Configure the production server or hosting platform to send the same headers when serving the built application.</li>
 </ol>
-<p>A complete plugin-free version of this demo is available in the <a href="https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/mini/vanilla-manual">vanilla-manual example</a>. It uses the bundler-neutral build command, <code>esbuild</code> only to bundle the application TypeScript, and a small Node.js server to serve the generated assets with the required headers.</p>
-<p>The plugin-free example adds two small files to take over the integration work:</p>
+<p>The plugin-free version adds two small files to take over the integration work:</p>
 <ul>
 <li><code>build.mjs</code> runs the bundler-neutral <code>orx-parallel-wasm</code> build command, copies the generated bindings, WASM module, and worker assets into <code>dist</code>, and bundles the application TypeScript with <code>esbuild</code>.</li>
 <li><code>server.mjs</code> serves <code>dist</code> and adds the <code>Cross-Origin-Opener-Policy: same-origin</code> and <code>Cross-Origin-Embedder-Policy: require-corp</code> headers required by <code>SharedArrayBuffer</code>.</li>
