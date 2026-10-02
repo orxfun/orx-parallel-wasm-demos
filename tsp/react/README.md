@@ -1,7 +1,7 @@
 # orx-parallel wasm TSP react
 
 You can check, test, and play around with the built application at:
-https://orx-parallel-wasm-demo-tsp-react.pages.dev/
+<https://orx-parallel-wasm-demo-tsp-react.pages.dev/>
 
 This example shows the recommended web structure for `orx-parallel` with a React + Vite host app:
 
