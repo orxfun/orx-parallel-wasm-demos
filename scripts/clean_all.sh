@@ -12,7 +12,7 @@ if (( $# > 1 )); then
     exit 1
 fi
 
-repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)"
+repo_root="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
 
 for group in mini tsp; do
     group_dir="$repo_root/$group"
@@ -26,6 +26,5 @@ for group in mini tsp; do
             rm -rf -- "$artifact"
         fi
     done < <(find "$group_dir" \
-        -type d -name node_modules -prune -o \
-        -type d \( -name target -o -name dist -o -name pkg \) -prune -print0)
+        -type d \( -name target -o -name dist -o -name pkg -o -name node_modules \) -prune -print0)
 done
