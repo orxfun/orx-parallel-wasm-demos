@@ -12,12 +12,12 @@ This separation is useful in a larger application: React owns rendering and UI s
 
 ## Rust UI frameworks
 
-The [TSP examples](https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/tsp) include additional applications built with different frontend approaches:
+The [TSP examples](https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/tsp) include additional applications built with different frontend approaches:
 
-* [Vanilla TypeScript](https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/tsp/vanilla) uses Vite and direct DOM updates.
-* [React](https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/tsp/react) uses React components with a Vite host application.
-* [Yew](https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/tsp/yew) uses a Rust Yew component crate hosted by a Vite browser application.
-* [Leptos](https://github.com/orxfun/orx-parallel/tree/main/examples/wasm/tsp/leptos) uses a Rust Leptos component crate with a Vite browser host.
+* [Vanilla TypeScript](https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/tsp/vanilla) uses Vite and direct DOM updates.
+* [React](https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/tsp/react) uses React components with a Vite host application.
+* [Yew](https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/tsp/yew) uses a Rust Yew component crate hosted by a Vite browser application.
+* [Leptos](https://github.com/orxfun/orx-parallel-wasm-demos/tree/main/tsp/leptos) uses a Rust Leptos component crate with a Vite browser host.
 
 The Vanilla and React examples keep the UI in JavaScript or TypeScript. The Yew and Leptos examples move the UI into Rust and compile it to WASM, but the architecture is still recognizable: a computation crate contains the algorithm, a bindings boundary exposes the WASM API, and the browser application owns initialization, worker lifecycle, and cross-origin isolation.
 
