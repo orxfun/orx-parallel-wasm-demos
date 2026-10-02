@@ -1,7 +1,7 @@
 # orx-parallel wasm TSP vanilla
 
 You can check, test, and play around with the built application at:
-https://orx-parallel-wasm-demo-tsp.pages.dev/
+<https://orx-parallel-wasm-demo-tsp-vanilla.pages.dev/>
 
 This example shows the recommended web structure for `orx-parallel` with a Vite + TypeScript frontend:
 
@@ -47,9 +47,9 @@ This crate is the boundary between Rust and JavaScript. It should stay thin.
 
 Its job is to:
 
-- expose wasm-safe functions such as `locations`, `init_wasm_parallel_runtime`, and `run_search`
+- expose computation functions such as `locations` and `run_search`
 - serialize and deserialize values at the edge
-- initialize the parallel runtime before the first parallel search
+- compile the computation for the browser through the `orx-parallel-wasm` integration
 
 ### `app/`
 
@@ -60,49 +60,27 @@ The UI should call into the wasm package, but it should not reimplement TSP logi
 ## Execution flow
 
 1. The UI creates or loads a TSP instance.
-2. The UI sends the request to a worker.
-3. The worker calls `init()` for the generated wasm package.
-4. If the request is parallel, the worker calls `init_wasm_parallel_runtime(thread_count)` before the first `run_search`.
-5. `run_search` executes the Rust computation and returns the result to the worker.
-6. The worker posts the result back to the UI.
+2. The UI sends the request through `src/search-runner.ts` to its persistent `ParallelWorker`.
+3. `orx-parallel-wasm` initializes the generated wasm package and parallel runtime in the worker.
+4. The worker calls `run_search` and returns the result to the UI.
 
-The worker can be short-lived, or it can be kept alive and reused across searches. In either case, each worker that runs parallel work must call `init_wasm_parallel_runtime` once before its first parallel search.
+The UI keeps one worker for repeated searches and terminates it when the page unloads. Runtime initialization is managed by `ParallelWorker`, not by a separate call in the UI.
 
 ## Important rules for parallel wasm on the web
 
-Parallel wasm in the browser has a few hard requirements. Missing any one of them usually leads to code that still runs, but no longer uses parallel execution.
+Parallel wasm in the browser requires a threaded wasm build and cross-origin isolation. The `orxParallelWasm` Vite plugin configures the local development server and generated worker setup.
 
 ### 1. Build wasm with thread support enabled
 
-The wasm build must target shared-memory/threaded wasm. In practice, that means using the build setup from `app/package.json` and the Rust configuration in `computation/` and `wasm_bindings/`.
-
-If you change the Rust code, rebuild the wasm package before running the UI again.
+Use `npm run build:wasm` in `app/` after changing Rust code. The script delegates the threaded build to `orx-parallel-wasm`.
 
 ### 2. Serve the app with cross-origin isolation headers
 
-Browser threads require `Cross-Origin-Opener-Policy` and `Cross-Origin-Embedder-Policy` headers. Without them, `SharedArrayBuffer` is unavailable and the threaded path cannot work.
+Browser threads require `Cross-Origin-Opener-Policy: same-origin` and `Cross-Origin-Embedder-Policy: require-corp`. The Vite plugin supplies them in development; production hosting must supply them too.
 
-A plain static server is usually not enough. Use the Vite dev server or a server that sends the same headers for the built app.
+### 3. Use the worker integration for runtime setup
 
-```ts
-// app/vite.config.ts
-import { defineConfig } from "vite";
-
-export default defineConfig({
-    server: {
-        headers: {
-            "Cross-Origin-Opener-Policy": "same-origin",
-            "Cross-Origin-Embedder-Policy": "require-corp"
-        }
-    }
-});
-```
-
-### 3. Initialize the parallel runtime once before the first parallel search
-
-Call `init_wasm_parallel_runtime` once in each worker that will execute parallel work.
-
-Do not assume that one worker initializing the runtime automatically prepares every other worker. If you create a new worker, that worker must initialize its own runtime before parallel search.
+The app's `ParallelWorker` owns wasm and runtime initialization. If you create additional workers outside that integration, each worker needs its own wasm/runtime setup.
 
 ## Testing strategy
 
@@ -132,7 +110,7 @@ The `app/README.md` contains the exact setup and run commands for the browser ap
 
 2. Expose only a thin wasm API.
 
-   Add `wasm_bindings/` as the bridge between Rust and JavaScript. Its job is always the same: expose `init_wasm_parallel_runtime` and re-export the computation functions with `wasm_bindgen` so the UI can call them from the browser.
+    Add `wasm_bindings/` as the bridge between Rust and JavaScript. Expose the computation functions needed by the UI; let the `orx-parallel-wasm` integration handle threaded worker setup.
 
 3. Build the UI around a worker boundary.
 
@@ -148,11 +126,9 @@ The `app/README.md` contains the exact setup and run commands for the browser ap
 
     Use Vite or another server that sends `Cross-Origin-Opener-Policy` and `Cross-Origin-Embedder-Policy` headers. Without them, the browser cannot use `SharedArrayBuffer`, so threaded wasm will fail.
 
-6. Initialize wasm inside each worker before running search.
+6. Use the worker integration to initialize wasm before running search.
 
-    Call `init()` first, then call `init_wasm_parallel_runtime(thread_count)` once per worker before the first parallel execution. If you create a new worker, that worker must initialize its own runtime too.
-
-    The same worker can then invoke any exposed computation function, parallel or sequential.
+    Use `ParallelWorker` from `orx-parallel-wasm` to load the generated bindings and prepare the runtime. The same worker can then run repeated computations.
 
 7. Pass data through the wasm boundary in a simple shape.
 
